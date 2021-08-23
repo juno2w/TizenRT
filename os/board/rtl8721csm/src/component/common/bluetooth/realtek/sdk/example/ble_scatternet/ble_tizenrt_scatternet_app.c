@@ -31,7 +31,6 @@
 #include "ble_tizenrt_app.h"
 #include "profile_server.h"
 #include <ble_tizenrt_service.h>
-#include <user_cmd.h>
 #include <user_cmd_parse.h>
 #include <gcs_client.h>
 #include "platform_opts_bt.h"
@@ -240,6 +239,7 @@ bool ble_tizenrt_scatternet_send_callback_msg(uint16_t type, void *arg)
         }
 	} else {
         debug_print("\r\n[%s] ble_tizenrt_callback_queue_handle is NULL", __FUNCTION__);
+        return false;
     }
 	return true;
 }
@@ -674,13 +674,6 @@ void ble_tizenrt_scatternet_app_handle_conn_state_evt(uint8_t conn_id, T_GAP_CON
                     debug_print("\n[%s] Memory allocation failed", __FUNCTION__);
                 }
             } else {
-                if(GAP_CAUSE_SUCCESS == le_bond_delete_by_bd(ble_tizenrt_scatternet_app_link_table[conn_id].remote_bd,
-                                ble_tizenrt_scatternet_app_link_table[conn_id].remote_bd_type))
-                {
-                    debug_print("\r\n[%s] Delete bond success", __FUNCTION__);
-                } else {
-                    debug_print("\r\n[%s] Delete bond fail!!!", __FUNCTION__);
-                }
                 memset(&ble_tizenrt_scatternet_app_link_table[conn_id], 0, sizeof(BLE_TIZENRT_SCATTERNET_APP_LINK));
                 uint32_t connid = (uint32_t) conn_id;
                 if(ble_tizenrt_scatternet_send_callback_msg(BLE_TIZENRT_DISCONNECTED_MSG, (void *) connid) == false)

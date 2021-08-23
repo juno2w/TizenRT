@@ -429,7 +429,6 @@ int8_t cmd_wifi_connect(trwifi_ap_config_s *ap_connect_config, void *arg)
 	int security_retry_count = 0;
 
 	wifi_utils_ap_auth_type_e auth = ap_connect_config->ap_auth_type;
-	wifi_utils_ap_crypto_type_e crypto = ap_connect_config->ap_crypto_type;
 	ssid = ap_connect_config->ssid;
 	switch (auth) {
 	case WIFI_UTILS_AUTH_OPEN:
@@ -459,6 +458,17 @@ int8_t cmd_wifi_connect(trwifi_ap_config_s *ap_connect_config, void *arg)
 		break;
 	case WIFI_UTILS_AUTH_WPA3_PSK:
 		security_type = RTW_SECURITY_WPA3_AES_PSK;
+		password = ap_connect_config->passphrase;
+		ssid_len = strlen((const char *)ssid);
+		password_len = ap_connect_config->passphrase_length;
+		semaphore = NULL;
+		break;
+	case WIFI_UTILS_AUTH_WPA_PSK:
+		if (ap_connect_config->ap_crypto_type == WIFI_UTILS_CRYPTO_AES) {
+			security_type = RTW_SECURITY_WPA_AES_PSK;
+		} else {
+			security_type = RTW_SECURITY_WPA_TKIP_PSK;
+		}
 		password = ap_connect_config->passphrase;
 		ssid_len = strlen((const char *)ssid);
 		password_len = ap_connect_config->passphrase_length;
